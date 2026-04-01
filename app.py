@@ -12,67 +12,10 @@ from urllib3.util.retry import Retry
 poster_cache = {}
 
 def create_default_data_if_missing():
-    """Load data from CSV or create dummy data if missing"""
-    if os.path.exists('movies_dict.pkl') and os.path.exists('similarity.pkl'):
-        return True
-    
-    try:
-        # Try to load from CSV files
-        if os.path.exists('tmdb_5000_movies.csv'):
-            print("Loading data from CSV files...")
-            movies_df = pd.read_csv('tmdb_5000_movies.csv')
-            
-            # Keep title and id
-            movies_data = movies_df[['title', 'id']].copy()
-            movies_data.rename(columns={'id': 'movie_id'}, inplace=True)
-            movies_data = movies_data.reset_index(drop=True)
-            
-            # Convert to dict format
-            movies_dict = {
-                'title': movies_data['title'].tolist(),
-                'movie_id': movies_data['movie_id'].tolist()
-            }
-            
-            # Save pickle
-            with open('movies_dict.pkl', 'wb') as f:
-                pickle.dump(movies_dict, f)
-            
-            # Generate similarity matrix from CSV
-            n = len(movies_data)
-            similarity = np.eye(n) + np.random.rand(n, n) * 0.5
-            similarity = (similarity + similarity.T) / 2  # Make symmetric
-            
-            with open('similarity.pkl', 'wb') as f:
-                pickle.dump(similarity, f)
-            
-            print(f"✓ Loaded {n} movies from CSV!")
-            return True
-    except Exception as e:
-        print(f"Could not load from CSV: {e}")
-    
-    # Fallback to dummy data
-    try:
-        print("Using dummy data (CSV not found)...")
-        default_movies = {
-            'title': ['The Shawshank Redemption', 'The Godfather', 'The Dark Knight', 
-                     'Pulp Fiction', 'Forrest Gump', 'Inception', 'Fight Club',
-                     'The Matrix', 'Goodfellas', 'Interstellar'],
-            'movie_id': [278, 238, 155, 680, 13, 27205, 550, 603, 7846, 157336]
-        }
-        
-        n = len(default_movies['title'])
-        similarity = np.eye(n) + np.random.rand(n, n) * 0.2
-        
-        with open('movies_dict.pkl', 'wb') as f:
-            pickle.dump(default_movies, f)
-        
-        with open('similarity.pkl', 'wb') as f:
-            pickle.dump(similarity, f)
-        
-        return True
-    except Exception as e:
-        print(f"Error creating dummy data: {e}")
-        return False
+    """Load pickle files - they should exist in repo"""
+    if not os.path.exists('movies_dict.pkl') or not os.path.exists('similarity.pkl'):
+        raise FileNotFoundError("Pickle files not found! Add movies_dict.pkl and similarity.pkl to repo")
+    return True
 
 def create_session_with_retries():
     """Create requests session with aggressive retry strategy"""
