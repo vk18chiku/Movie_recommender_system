@@ -1,25 +1,4 @@
 # Large data files
 *.pkl
-*.csv
 
-# Jupyter
-.ipynb_checkpoints/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-
-# OS
-.DS_Store
-Thumbs.db
+# CSV files are needed for data generation
