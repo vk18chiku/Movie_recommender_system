@@ -4,11 +4,42 @@ import numpy as np
 import pandas as pd
 import requests
 import time
+import os
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # Cache for poster URLs
 poster_cache = {}
+
+def create_default_data_if_missing():
+    """Create default data files if they don't exist (for Render deployment)"""
+    if os.path.exists('movies_dict.pkl') and os.path.exists('similarity.pkl'):
+        return True
+    
+    try:
+        # Create default movies data
+        default_movies = {
+            'title': ['The Shawshank Redemption', 'The Godfather', 'The Dark Knight', 
+                     'Pulp Fiction', 'Forrest Gump', 'Inception', 'Fight Club',
+                     'The Matrix', 'Goodfellas', 'Interstellar'],
+            'movie_id': [278, 238, 155, 680, 13, 27205, 550, 603, 7846, 157336]
+        }
+        
+        # Create default similarity matrix (identity matrix as fallback)
+        n = len(default_movies['title'])
+        similarity = np.eye(n) + np.random.rand(n, n) * 0.2
+        
+        # Save files
+        with open('movies_dict.pkl', 'wb') as f:
+            pickle.dump(default_movies, f)
+        
+        with open('similarity.pkl', 'wb') as f:
+            pickle.dump(similarity, f)
+        
+        return True
+    except Exception as e:
+        print(f"Error creating default data: {e}")
+        return False
 
 def create_session_with_retries():
     """Create requests session with aggressive retry strategy"""
@@ -78,6 +109,9 @@ def recommend(movie):
         return [], []
 
 st.header('Movie Recommender System')
+
+# Create default data if missing (for Render deployment)
+create_default_data_if_missing()
 
 # Load the data
 try:
