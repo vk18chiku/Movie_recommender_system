@@ -75,6 +75,10 @@ The app uses the **TMDB API** to fetch movie posters. The API key is included in
 
 ## Deployment
 
+### Live Application
+
+The application is deployed and live at: **[https://movie-recommender-system-3-1pxt.onrender.com/](https://movie-recommender-system-3-1pxt.onrender.com/)**
+
 ### Deploy on Render (Recommended for Streamlit)
 
 1. Push code to GitHub
