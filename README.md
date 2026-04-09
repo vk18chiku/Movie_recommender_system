@@ -67,6 +67,62 @@ Movie_recommender_system/
 4. **Fetch Posters**: Retrieves movie posters from TMDB API with retry logic
 5. **Display Results**: Shows recommended movies with their posters in a 5-column layout
 
+## Feature Engineering Pipeline
+
+The recommendation system uses advanced feature engineering to create rich movie representations:
+
+### 1. **Data Integration**
+- Merged TMDB movies and credits datasets on movie title
+- Selected relevant features: genres, keywords, cast, crew, overview
+
+### 2. **JSON Data Extraction**
+- **Genres**: Extracted genre names from JSON format
+- **Keywords**: Extracted movie keywords from JSON format
+- **Cast**: Extracted top 3 actor names from cast list
+- **Crew**: Extracted director names from crew information
+
+### 3. **Text Preprocessing**
+- Removed null values from dataset
+- Split movie overviews into individual words
+- Removed spaces from genre, keywords, cast, and crew names for better matching
+
+### 4. **Feature Combination**
+- Created composite "tags" feature by concatenating:
+  - All genres
+  - All keywords
+  - Top 3 cast members
+  - Director name
+  - Movie overview text
+
+### 5. **Text Normalization**
+- Converted all tags to lowercase for consistency
+- Applied **Porter Stemming** to reduce words to their root form
+  - Example: "running", "runs", "ran" all become "run"
+
+### 6. **Vectorization**
+- Used **CountVectorizer** from scikit-learn
+- Extracted 5000 most frequent features
+- Removed common English stop words (the, a, an, etc.)
+- Converted text tags into numerical vectors
+
+### 7. **Similarity Matrix Computation**
+- Computed **Cosine Similarity** between all movie vectors
+- Created a 5000×5000 similarity matrix
+- Similarity ranges from 0 (no match) to 1 (identical)
+
+### 8. **Model Persistence**
+- Saved processed data as `movies_dict.pkl`
+- Saved similarity matrix as `similarity.pkl`
+- Enables fast loading without recomputation
+
+### Result
+The feature engineering pipeline transforms raw movie metadata into a semantic representation that captures:
+- Thematic elements (genres, keywords)
+- Creative team (cast, director)
+- Plot context (overview)
+
+This enables the system to find movies with similar themes, actors, and storytelling styles.
+
 ## API Integration
 
 The app uses the **TMDB API** to fetch movie posters. The API key is included in the code for demonstration purposes.
